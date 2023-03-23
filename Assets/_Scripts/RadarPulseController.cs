@@ -45,7 +45,7 @@ public class RadarPulseController : MonoBehaviour {
                 if (!_alreadyPingedColliderList.Contains(col)) {
                     _alreadyPingedColliderList.Add(col);
                     
-                    Transform radarPingTransform = Instantiate(_radarPingPrefab, raycastHit2D.point, Quaternion.identity);                    
+                    Transform radarPingTransform = Instantiate(_radarPingPrefab, col.gameObject.transform.position, Quaternion.identity);                    
                     RadarPing radarPing = radarPingTransform.GetComponent<RadarPing>();
                     PlayMotionSound(raycastHit2D, radarPing);
                     radarPing.SetDisappearTimer(_rangeMax / _rangeSpeed * _livePingInstances);

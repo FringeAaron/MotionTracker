@@ -1,45 +1,51 @@
 using CodeMonkey.Utils;
-using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
-    [SerializeField] private float _speed = 10f;
-    [SerializeField] private Transform _levelUpParticles;
+    [SerializeField] private PlayerScriptableObject _player;
+    [SerializeField] private Transform _levelUpParticles;    
+    [SerializeField] private Transform _radarOverlay;
+    [SerializeField] private float _respawnDelay;
 
-    private Transform _radarOverlay;
     private GameObject _visual;
     private InputManager _input;
-    private ShootController _shootController;    
     private LevelSystemAnimated _levelSystemAnimated;
-    public float Health = 2;
 
     void Start() {
-        _visual = transform.Find("Visual").gameObject;
-        _radarOverlay = transform.Find("Redo-Overlay");        
-        InputInitialization();
-        _shootController = gameObject.GetComponent<ShootController>();
+        InitVisual();
+        InitInput();
     }
 
-    private void InputInitialization() {
+    private void InitInput() {
         _input = new InputManager();
-        if (_input != null)
+        if (_input != null) {
             _input.Player.Enable();
+        }
+    }
+
+    private void InitVisual() {
+        GameObject visual = Instantiate(new GameObject("Player Visual"), transform);
+        visual.transform.localScale = _player.Scale;
+        SpriteRenderer renderer = visual.AddComponent<SpriteRenderer>();
+        renderer.sprite = _player.Icon;
+        renderer.color = _player.Color;
+        _visual = visual;
     }
 
     private void Update() {        
         Rotate();
-        _shootController.DoShoot = _input.Player.Shoot.IsPressed();
     }
+
     void Rotate() {
         float rotateDirection = _input.Player.Rotate.ReadValue<float>();
-        var rotationAmount = _speed * rotateDirection * Time.deltaTime * Vector3.forward;
+        var rotationAmount = _player.TurnSpeed * rotateDirection * Time.deltaTime * Vector3.forward;
         transform.Rotate(rotationAmount);
         _radarOverlay.transform.Rotate(rotationAmount * -1);
     }
 
     public void SetLevelSystemAnimated(LevelSystemAnimated levelSystemAnimated) {
         _levelSystemAnimated = levelSystemAnimated;
-        
         _levelSystemAnimated.OnLevelChanged += LevelSystemAnimated_OnLevelChanged;
     }
 
@@ -54,6 +60,11 @@ public class PlayerController : MonoBehaviour {
 
     public void Die() {
         _visual.SetActive(false);
+        StartCoroutine(RespawnAfterTime());
+    }
+    IEnumerator RespawnAfterTime() {
+        yield return new WaitForSeconds(_respawnDelay);
+        _visual.SetActive(true);
     }
     void OnDestroy() {
         _levelSystemAnimated.OnLevelChanged -= LevelSystemAnimated_OnLevelChanged;

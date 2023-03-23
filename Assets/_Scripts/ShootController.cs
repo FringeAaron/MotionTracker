@@ -1,11 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ShootController : MonoBehaviour {
 
     [SerializeField] private GameObject _bulletPrefab;
+    [SerializeField] private GameObject _muzzleFlashPrefab;
     [SerializeField] private Transform _bulletSpawnPos;
+    [SerializeField] private Transform _muzzleFlashPos;
     [SerializeField] private float _fireRate;
     [SerializeField] private int _initialBulletCount = 2;
     
@@ -14,8 +15,12 @@ public class ShootController : MonoBehaviour {
     private List<Bullet> _bullets;
     private float _waitTime;
     public bool DoShoot = false;
+    private GameObject _muzzleFlash;
 
-    private void Start() {        
+    private void Start() {    
+        _muzzleFlash = GameObject.Find("Muzzle Flash");
+        _muzzleFlash.SetActive(false);
+
         _bullets = new List<Bullet>();
         for (int i = 0; i < _initialBulletCount; i++) {            
             _bullets.Add(Instantiate(_bulletPrefab).GetComponent<Bullet>());
@@ -26,6 +31,9 @@ public class ShootController : MonoBehaviour {
     }
 
     private void Update() {
+        _muzzleFlash.SetActive(DoShoot);
+
+
         if (DoShoot) {
             if (Time.time > _waitTime) {
                 _waitTime = Time.time + _fireRate;

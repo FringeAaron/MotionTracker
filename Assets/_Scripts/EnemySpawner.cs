@@ -59,7 +59,7 @@ public class EnemySpawner : MonoBehaviour {
         enemy.gameObject.SetActive(false);
         if (earnExperience) {
             OnEnemyKilled?.Invoke(this, EventArgs.Empty);
-            _levelSystem.AddExperience(enemy.EnemyScriptableObject.ExperienceForKill);
+            _levelSystem.AddExperience(enemy._enemyStats.ExperienceForKill);
         }
     }
 

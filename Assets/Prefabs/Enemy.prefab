@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4900192189779389708}
   - component: {fileID: 4900192189779389709}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 4900192190974689935}
   - component: {fileID: 4900192190974689934}
   - component: {fileID: 4900192190974689928}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -130,10 +130,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c699233ee792142b298093f1f3b0c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 1
-  _hits: 1
-  _spawnRadius: 18
-  EnemyScriptableObject: {fileID: 11400000, guid: 2244f9b1868c2064c89751e8e265070f, type: 2}
+  Type: 0
+  _enemyStats: {fileID: 11400000, guid: 2244f9b1868c2064c89751e8e265070f, type: 2}
 --- !u!58 &4900192190974689928
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {    
 
     public EnemyType Type = EnemyType.Standard;
-    public EnemyScriptableObject EnemyScriptableObject;
+    public EnemyScriptableObject _enemyStats;
 
     private EnemySpawner _enemySpawner;
     private float _speed = 1f;
@@ -32,7 +32,7 @@ public class Enemy : MonoBehaviour {
 
         if (Vector3.Distance(transform.position, _target.position) < 0.001f) {
             if (_target.TryGetComponent<HealthController>(out var health)) {
-                health.Damage(1f);
+                health.Damage(_enemyStats.Damage);
             }
             Despawn(false);
         }
@@ -51,9 +51,9 @@ public class Enemy : MonoBehaviour {
     }
 
     private void SetupEnemyFromConfiguration() {
-        _hits = EnemyScriptableObject.Hits;
-        _speed = EnemyScriptableObject.Speed;        
+        _hits = _enemyStats.Health;
+        _speed = _enemyStats.Speed;        
         
-        Type = EnemyScriptableObject.Type;
+        Type = _enemyStats.Type;
     }
 }

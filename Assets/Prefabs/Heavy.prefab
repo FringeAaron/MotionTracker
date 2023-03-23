@@ -7,10 +7,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4900192190974689928, guid: bc24a4fc543f72744a24cbf7f8a7a407, type: 3}
+      propertyPath: m_Radius
+      value: 1.25
+      objectReference: {fileID: 0}
     - target: {fileID: 4900192190974689933, guid: bc24a4fc543f72744a24cbf7f8a7a407, type: 3}
       propertyPath: m_Name
       value: Heavy
       objectReference: {fileID: 0}
+    - target: {fileID: 4900192190974689934, guid: bc24a4fc543f72744a24cbf7f8a7a407, type: 3}
+      propertyPath: Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900192190974689934, guid: bc24a4fc543f72744a24cbf7f8a7a407, type: 3}
+      propertyPath: _enemyStats
+      value: 
+      objectReference: {fileID: 11400000, guid: e5c9782257fafeb4c8b941beac390a33, type: 2}
     - target: {fileID: 4900192190974689934, guid: bc24a4fc543f72744a24cbf7f8a7a407, type: 3}
       propertyPath: EnemyScriptableObject
       value: 
