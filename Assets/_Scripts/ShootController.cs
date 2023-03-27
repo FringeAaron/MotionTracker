@@ -4,9 +4,7 @@ using UnityEngine;
 public class ShootController : MonoBehaviour {
 
     [SerializeField] private GameObject _bulletPrefab;
-    [SerializeField] private GameObject _muzzleFlashPrefab;
     [SerializeField] private Transform _bulletSpawnPos;
-    [SerializeField] private Transform _muzzleFlashPos;
     [SerializeField] private float _fireRate;
     [SerializeField] private int _initialBulletCount = 2;
     

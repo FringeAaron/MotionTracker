@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RadarPulseController : MonoBehaviour {
     [SerializeField] private Transform _radarPingPrefab;
+    [SerializeField] private Transform _targetPingPrefab;
     [SerializeField] private float _rangeMax = 100f;
     [SerializeField] private float _rangeSpeed = 100f;
     [SerializeField] private float _pulseOpacity = 1f;
@@ -12,6 +13,7 @@ public class RadarPulseController : MonoBehaviour {
     [SerializeField] private float _livePingInstances = 1f;
     [SerializeField] private AudioClip _pingSound;
     [SerializeField] private AudioClip _motionSound;
+    
 
 
     private Transform _pulseTransform;
@@ -54,6 +56,14 @@ public class RadarPulseController : MonoBehaviour {
                     if (enemy != null) {
                         radarPing.SetColor(GetColor(enemy.Type));
                         radarPingTransform.localScale = GetScale(enemy.Type);
+                        if (enemy.Targeted) {
+                            Transform targetPingTransform = Instantiate(_targetPingPrefab, col.gameObject.transform.position, Quaternion.identity);
+                            RadarPing targetPing = targetPingTransform.GetComponent<TargetPing>();
+                            if (targetPingTransform.TryGetComponent<SpriteRenderer>(out var spriteRenderer)) {
+                                targetPing.SetColor(spriteRenderer.color);
+                            }
+                            targetPing.SetDisappearTimer(_rangeMax / _rangeSpeed * _livePingInstances);
+                        }
                     }
                     
                 }

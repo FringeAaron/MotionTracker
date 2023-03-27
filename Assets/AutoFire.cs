@@ -4,29 +4,30 @@ public class AutoFire : MonoBehaviour {
     [SerializeField] private float _scanFrequency = .5f;
     [SerializeField] private int _coneSegments = 10;
     [SerializeField] private LayerMask _layerMask;
-    [SerializeField] private PlayerScriptableObject _player;
+    [SerializeField] private PlayerStats _player;
+    [SerializeField] private GameObject _muzzleFlash;
 
-    private ShootController _shooter;
     private float _waitTime;
+    private bool _doShoot = false;
+
 
     private void Awake() {
-        _shooter = GetComponent<ShootController>();
         _waitTime = Time.time + _scanFrequency;
+        _muzzleFlash.SetActive(false);
+
     }
     void Update() {
         InvokeRepeating(nameof(RaycastSweep), _scanFrequency, _scanFrequency);
-
-        if (Input.GetMouseButtonDown(0)) {
-            RaycastSweep();
-        }
     }
 
     void RaycastSweep() {
         if (Time.time < _waitTime) {
             return;
         }
-            
-        Vector3 startPos = transform.position; // umm, start position !
+        
+        _muzzleFlash.SetActive(_doShoot);
+
+        Vector3 startPos = new Vector3(transform.position.x, _muzzleFlash.transform.position.y, transform.position.z); // umm, start position !
 
         int startAngle = Mathf.RoundToInt(-_player.FireAngle * 0.5f); // half the angle to the Left of the forward
         int finishAngle = Mathf.RoundToInt(_player.FireAngle * 0.5f); // half the angle to the Right of the forward
@@ -42,17 +43,26 @@ public class AutoFire : MonoBehaviour {
 
             // linecast between points
             hit = Physics2D.Linecast(startPos, targetPos, _layerMask);
-            if (hit.collider != null) {                
-                _shooter.DoShoot = true;
+            if (hit.collider != null) {
+                if (hit.collider.TryGetComponent<Enemy>(out var enemy)) {
+                    enemy.TargetWithCooldown(1.5f);
+                    enemy.Hit();
+                    _doShoot = true;
+                    _muzzleFlash.SetActive(_doShoot);
+                }
+                
                 _waitTime = Time.time + _scanFrequency;
+                
                 Debug.Log("Hit " + hit.collider.gameObject.name);
                 return;
             } else {
-                _shooter.DoShoot = false;
+                _doShoot = false;
             }
 
             // to show ray just for testing
             Debug.DrawLine(startPos, targetPos, Color.green);
         }
+
+        _doShoot = false;
     }
 }

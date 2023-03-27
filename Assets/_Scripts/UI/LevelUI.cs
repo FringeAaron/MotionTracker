@@ -43,7 +43,6 @@ public class LevelUI : MonoBehaviour {
     }
 
     private void LevelSystemAnimated_OnExperienceChanged(object sender, System.EventArgs e) {
-        Debug.Log("LevelSystemAnimated Experience Event Triggered");
         SetExperienceBarSize(_levelSystemAnimated.GetExperienceNormalised());
     }
     

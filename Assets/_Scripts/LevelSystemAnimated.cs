@@ -30,8 +30,7 @@ public class LevelSystemAnimated {
     }
 
     private void LevelSystem_OnExperienceChanged(object sender, System.EventArgs e) {
-        _isAnimating = true;
-        Debug.Log("LevelSystem Experience Event Triggered");
+        _isAnimating = true;        
     }
     private void LevelSystem_OnLevelChanged(object sender, System.EventArgs e) {
         _isAnimating = true;        

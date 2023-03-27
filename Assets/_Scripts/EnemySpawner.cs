@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour {
@@ -8,20 +8,28 @@ public class EnemySpawner : MonoBehaviour {
 
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private int _initialEnemyCount = 2;
+    [SerializeField] private float _minSpawnRadius = 10f;
+    [SerializeField] private float _maxSpawnRadius = 35f;
+    [SerializeField] private TargetDamageStats _targetDamage;
 
-    private readonly float _spawnRadius = 15f;
     private int _enemyIndex;
     private List<Enemy> _enemies;
     private bool _canSpawn;
     private LevelSystem _levelSystem;
+    private PlayerController _target;
 
 
 
     private void Start() {
+        _target = GameObject.FindGameObjectsWithTag("Player").First().GetComponent<PlayerController>();
+        _targetDamage.TargetStats = _target.PlayerStats;
+
         _enemies = new List<Enemy>();
         for (int i = 0; i < _initialEnemyCount; i++) {
-            _enemies.Add(Instantiate(_enemyPrefab).GetComponent<Enemy>());
-            _enemies[i].gameObject.SetActive(false);
+            var enemy = Instantiate(_enemyPrefab);
+            enemy.name = "Enemy " + i;
+            enemy.SetActive(false);
+            _enemies.Add(enemy.GetComponent<Enemy>());
         }
     }
 
@@ -29,12 +37,15 @@ public class EnemySpawner : MonoBehaviour {
         for (int i = 0; i < amt; i++) {
             _enemyIndex = 0;
             _canSpawn = true;
-            while (_canSpawn) {
-                var position = new Vector3(UnityEngine.Random.Range(-_spawnRadius, _spawnRadius), UnityEngine.Random.Range(-_spawnRadius, _spawnRadius), 0);
-                if (!_enemies[_enemyIndex].gameObject.activeInHierarchy) {
-                    _enemies[_enemyIndex].transform.position = position;
-                    _enemies[_enemyIndex].gameObject.SetActive(true);
+            
+            // Find a spot in an annulus shape around the player
+            Vector2 pos = UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(_minSpawnRadius, _maxSpawnRadius);
 
+            while (_canSpawn) {
+                if (!_enemies[_enemyIndex].gameObject.activeInHierarchy) {
+                    // Respawn here so the array reference is updated too
+                    _enemies[_enemyIndex].transform.position = pos;
+                    _enemies[_enemyIndex].gameObject.SetActive(true);                    
                     _canSpawn = false;
                     break;
                 } else {
@@ -42,7 +53,9 @@ public class EnemySpawner : MonoBehaviour {
                 }
 
                 if (_enemyIndex == _enemies.Count) {
-                    _enemies.Add(Instantiate(_enemyPrefab, position, Quaternion.identity).GetComponent<Enemy>());
+                    var newEnemy = Instantiate(_enemyPrefab, pos, Quaternion.identity);
+                    newEnemy.name = "Enemy " + _enemyIndex;
+                    _enemies.Add(newEnemy.GetComponent<Enemy>());
 
                     _canSpawn = false;
                     break;
@@ -51,9 +64,6 @@ public class EnemySpawner : MonoBehaviour {
         }
     }
 
-    public void Respawn(Enemy enemy) {
-        enemy.transform.position = new Vector3(UnityEngine.Random.Range(-_spawnRadius, _spawnRadius), UnityEngine.Random.Range(-_spawnRadius, _spawnRadius), 0);
-    }
 
     public void Despawn(Enemy enemy, bool earnExperience) {
         enemy.gameObject.SetActive(false);
@@ -65,6 +75,23 @@ public class EnemySpawner : MonoBehaviour {
 
     public void SetLevelSystem(LevelSystem levelSystem) {
         _levelSystem = levelSystem;
+    }
+
+    private void Update() {
+        for (int i = 0; i < _enemies.Count; i++) {
+            Enemy enemy = _enemies[i];
+            if (!enemy.gameObject.activeInHierarchy) {
+                continue;
+            }
+            var step = enemy._enemyStats.Speed * Time.deltaTime;
+            enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, _target.transform.position, step);
+
+            if (Vector3.Distance(enemy.transform.position, _target.transform.position) < 0.001f) {                
+                _targetDamage.Damage = enemy._enemyStats.Damage;
+                _targetDamage.CommitDamage();
+                Despawn(enemy, false);
+            }
+        }
     }
 
 }

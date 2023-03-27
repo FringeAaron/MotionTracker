@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private LevelUI _levelUI;
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private EnemySpawner _enemySpawner;
+    [SerializeField] private PlayerStats _playerStats;
+
+    private void Awake() {
+        _playerStats.InitDefaults();
+    }
 
     private void Start() {
         LevelSystem levelSystem = new();

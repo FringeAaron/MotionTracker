@@ -1,9 +1,10 @@
 using CodeMonkey.Utils;
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
-    [SerializeField] private PlayerScriptableObject _player;
+    public PlayerStats PlayerStats;
     [SerializeField] private Transform _levelUpParticles;    
     [SerializeField] private Transform _radarOverlay;
     [SerializeField] private float _respawnDelay;
@@ -17,6 +18,10 @@ public class PlayerController : MonoBehaviour {
         InitInput();
     }
 
+    private void OnEnable() {
+        PlayerStats.HealthChanged += CheckIfAlive;
+    }
+
     private void InitInput() {
         _input = new InputManager();
         if (_input != null) {
@@ -26,10 +31,10 @@ public class PlayerController : MonoBehaviour {
 
     private void InitVisual() {
         GameObject visual = Instantiate(new GameObject("Player Visual"), transform);
-        visual.transform.localScale = _player.Scale;
+        visual.transform.localScale = PlayerStats.Scale;
         SpriteRenderer renderer = visual.AddComponent<SpriteRenderer>();
-        renderer.sprite = _player.Icon;
-        renderer.color = _player.Color;
+        renderer.sprite = PlayerStats.Icon;
+        renderer.color = PlayerStats.Color;
         _visual = visual;
     }
 
@@ -39,7 +44,7 @@ public class PlayerController : MonoBehaviour {
 
     void Rotate() {
         float rotateDirection = _input.Player.Rotate.ReadValue<float>();
-        var rotationAmount = _player.TurnSpeed * rotateDirection * Time.deltaTime * Vector3.forward;
+        var rotationAmount = PlayerStats.TurnSpeed * rotateDirection * Time.deltaTime * Vector3.forward;
         transform.Rotate(rotationAmount);
         _radarOverlay.transform.Rotate(rotationAmount * -1);
     }
@@ -58,15 +63,24 @@ public class PlayerController : MonoBehaviour {
         FunctionTimer.Create(() => Destroy(effect.gameObject), 3f);
     }
 
-    public void Die() {
-        _visual.SetActive(false);
-        StartCoroutine(RespawnAfterTime());
+    public void TakeDamage(int damage) {
+        PlayerStats.Health -= damage;
     }
+
+    private void CheckIfAlive(object sender, EventArgs e) {
+        if (PlayerStats.Health <= 0) {
+            _visual.SetActive(false);
+            StartCoroutine(RespawnAfterTime());
+        }        
+    }
+
     IEnumerator RespawnAfterTime() {
         yield return new WaitForSeconds(_respawnDelay);
         _visual.SetActive(true);
+        PlayerStats.Health = PlayerStats.MaxHealth;
     }
     void OnDestroy() {
         _levelSystemAnimated.OnLevelChanged -= LevelSystemAnimated_OnLevelChanged;
+        PlayerStats.HealthChanged -= CheckIfAlive;
     }
 }

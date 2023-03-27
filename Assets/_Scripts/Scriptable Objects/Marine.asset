@@ -12,18 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4204a1d7f604f0c41b68e79816260b6b, type: 3}
   m_Name: Marine
   m_EditorClassIdentifier: 
+  _color:
+    serializedVersion: 2
+    rgba: 0
+  _scale: {x: 0, y: 0, z: 0}
+  _icon: {fileID: 0}
+  _health: 6
+  _maxHealth: 10
+  _experience: 0
+  _level: 0
+  _damage: 1
+  _turnSpeed: 0
+  _fireRate: 0
+  _fireRange: 0
+  _fireAngle: 0
+  _radarScanFrequency: 0
+  _radarScanRange: 0
   Color:
     serializedVersion: 2
     rgba: 4284075263
   Scale: {x: 0.38, y: 0.38, z: 0.38}
   Icon: {fileID: 21300000, guid: 062d9ac54abb8604f8174f70adc28834, type: 3}
-  Health: {fileID: 11400000, guid: 624b344b83c230b4886e413635b3b98d, type: 2}
   Experience: 0
   Level: 0
-  Damage: 0
+  Damage: 1
   TurnSpeed: 100
-  FireRate: 0
-  FireRange: 12
-  FireAngle: 30
+  FireRate: 0.05
+  FireRange: 12.56
+  FireAngle: 2
   RadarScanFrequency: 0
   RadarScanRange: 0
