@@ -50,8 +50,27 @@ public class PlayerStats : ScriptableObject {
             }
         }
     }
-    public int Experience;
-    public int Level;
+
+    private int _activeExperience;
+    public int Experience {
+        get { return _activeExperience; }
+        set {
+            if (value != _activeExperience) {
+                _activeExperience = Mathf.Max(value, 0);
+            }
+        }
+    }
+
+    private int _activeLevel;
+    public int Level {
+        get { return _activeLevel; }
+        set {
+            if (value != _activeLevel) {
+                _activeLevel = Mathf.Max(value, 0);
+            }
+        }
+    }
+    
     public int Damage;
 
     public float TurnSpeed;

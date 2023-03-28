@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour {
 
     private void LevelSystemAnimated_OnLevelChanged(object sender, System.EventArgs e) {
         PlayLevelUpEffect();
+        PlayerStats.Level = _levelSystemAnimated.GetLevel();
+        PlayerStats.Experience = _levelSystemAnimated.GetExperience();
     }
 
     private void PlayLevelUpEffect() {
